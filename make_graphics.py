@@ -55,6 +55,8 @@ cov = np.array([[0.05, 0.004],
 dist = stats.multivariate_normal(np.array([0.5, 1.0]), cov)
 Z2 += dist.pdf(XY).reshape((n, n)) * 0.3
 
+Z2 += 2.5
+
 # Set plotting settings
 color_scale1 = 'Greens'
 color_scale2 = 'Greys'
@@ -67,26 +69,28 @@ layout = go.Layout(
         	eye=dict(x=0, y=-1.8, z=0.1)
     	),
     	xaxis = dict(
-        	title='',
+        	title='Sequence',
         	showgrid=False,
-        	zeroline=False,
-        	showline=False,
+        	zeroline=True,
+        	mirror=True,
+        	showline=True,
         	ticks='',
         	showticklabels=False
     	),
     	yaxis = dict(
-        	title='',
+        	title='Sequence',
         	showgrid=False,
-        	zeroline=False,
-        	showline=False,
+        	zeroline=True,
+        	mirror=True,
+        	showline=True,
         	ticks='',
         	showticklabels=False
     	),
     	zaxis = dict(
-        	title='',
+        	title='Fitness',
         	showgrid=False,
-        	zeroline=False,
-        	showline=False,
+        	zeroline=True,
+        	showline=True,
         	ticks='',
         	showticklabels=False
     	)
@@ -94,8 +98,8 @@ layout = go.Layout(
 )
 
 data = [
-    go.Surface(z=Z1, opacity=1, colorscale=color_scale1, showscale=False, reversescale=True),
-    go.Surface(z=Z2, opacity=1, colorscale=color_scale2, showscale=False, reversescale=True)
+    go.Surface(z=Z1, opacity=1, colorscale=color_scale1, showscale=False, reversescale=True)#,
+    #go.Surface(z=Z2, opacity=1, colorscale=color_scale2, showscale=False, reversescale=True)
 ]
 
 fig = go.Figure(data=data, layout=layout)
