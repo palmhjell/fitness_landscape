@@ -30,6 +30,36 @@ import plotly.offline as py
 import plotly.graph_objs as go
 # -
 
+# ## Make a color scheme
+
+# +
+from colour import Color
+
+black = Color("black")
+white = Color("white")
+green = Color("green")
+
+start = list(black.range_to(white, 10))
+start
+
+end = list(white.range_to(green, 10))
+end
+
+
+colors = start + end[1:]
+
+colors
+
+colors_test = []
+
+for i in range(0, len(colors)-1):
+    working = [i/20] + [Color(colors[i]).hex]
+    colors_test.append(working)
+
+    
+colors_test
+# -
+
 # ## Plotting settings
 
 # +
@@ -179,6 +209,47 @@ cov = np.array([[0.01, 0.002],
                [0.003, 0.01]])
 dist = stats.multivariate_normal(np.array([0., -0.8]), cov)
 Z_complex += dist.pdf(XY).reshape((n, n)) * 0.035
+
+# +
+n = 100
+
+r = 1
+x = np.linspace(-1.4, 1.4, n)
+y = np.linspace(-1.4, 1.4, n)
+X, Y = np.meshgrid(x, y)
+
+
+XY = np.empty((n * n, 2))
+XY[:, 0] = X.flatten()
+XY[:, 1] = Y.flatten()
+cov = np.eye(2) * 0.2
+dist = stats.multivariate_normal(np.zeros(2), cov)
+Z_single = dist.pdf(XY).reshape((n, n))
+Z_single += np.random.random((n, n)) * 0.0
+
+# +
+n = 1000
+
+r = 10
+x = np.linspace(-1.7, 1.7, n)
+y = np.linspace(-1.7, 1.7, n)
+X, Y = np.meshgrid(x, y)
+
+
+XY = np.empty((n * n, 2))
+XY[:, 0] = X.flatten()
+XY[:, 1] = Y.flatten()
+
+Z_rugged = np.zeros((n, n))
+np.random.seed(1226)
+for _ in range(50):
+    emb = np.random.random((2, 5)) * 0.05
+    cov = emb @ emb.T
+    x = np.random.random() * 2 - 1
+    y = np.random.random() * 2 - 1
+    mag = np.random.random()
+    dist = stats.multivariate_normal(np.array([x, y]), cov)
+    Z_rugged += dist.pdf(XY).reshape((n, n))
 # -
 
 # ## Do the plots
@@ -194,22 +265,40 @@ Z_complex += dist.pdf(XY).reshape((n, n)) * 0.035
 # py.plot(fig, filename='temp_landscape.html')
 
 # +
-data = [
-    go.Surface(z=Z1, opacity=1, colorscale=color_scale1, showscale=False, reversescale=True)
-]
+# data = [
+#     go.Surface(z=Z_complex, opacity=1, colorscale=colors, showscale=False, reversescale=True)
+# ]
 
-fig = go.Figure(data=data, layout=layout)
+# fig = go.Figure(data=data, layout=layout)
 
-py.plot(fig, filename='three_peak_landscape.html')
+# py.plot(fig, filename='temp.html')
 
 # +
 data = [
-    go.Surface(z=Z_complex, opacity=1, colorscale=color_scale1, showscale=False, reversescale=True)
+    go.Surface(z=Z_complex, opacity=1, colorscale=colors_test2)
 ]
 
 fig = go.Figure(data=data, layout=layout)
 
-py.plot(fig, filename='complex_peak_landscape.html')
+py.plot(fig, filename='test.html')
+
+# +
+data = [
+    go.Surface(z=Z_single, opacity=1, colorscale=color_scale1, showscale=False, reversescale=True)
+]
+
+fig = go.Figure(data=data, layout=layout)
+
+py.plot(fig, filename='single_peak_landscape.html')
+
+# +
+data = [
+    go.Surface(z=Z_rugged, opacity=1, colorscale=color_scale1, showscale=False, reversescale=True)
+]
+
+fig = go.Figure(data=data, layout=layout)
+
+py.plot(fig, filename='rugged_peak_landscape.html')
 # -
 
 
